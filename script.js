@@ -76,6 +76,24 @@ function CodeToResult(codeArray) {
                         varValue.push(newVarValue);
                         varType.push("S")
                     }
+                } else if (newCode.indexOf("B ") == 0) {
+                    var newVarName=  newCode.slice(2, newCode.indexOf("<") - 1);
+                    var newVarValue = newCode.slice(newCode.indexOf("<") + 3);
+                    if (Number(newVarValue) != 0 && Number(newVarValue) != 1) {
+                        alert("Error : line" + (i + 1) + ", Bool타입 변수는 1, 0만 들어갈 수 있습니다.")
+                    }
+                    if (varName.indexOf(newVarName) >= 0) {
+                        var nowVarIndex = varName.indexOf(newVarName);
+                        if (varType[nowVarIndex] != "B") {
+                            alert("Error : line " + (i + 1) + ", 변수 타입은 변경할 수 없습니다.");
+                            return;
+                        }
+                        varValue[nowVarIndex] = newVarValue;
+                    } else {
+                        varName.push(newVarName);
+                        varValue.push(newVarValue);
+                        varType.push("B")
+                    }
                 } else if (newCode.indexOf("Go ") == 0) {
                     var lineIndex = Number(newCode.slice(3));
                     if (isNaN(lineIndex) || lineIndex % 1 != 0 || lineIndex < 1) {
@@ -87,10 +105,33 @@ function CodeToResult(codeArray) {
                 } else if (newCode.indexOf("Add ") == 0) {
                     var nowVarName = newCode.split(" ")[1];
                     if (varName.indexOf(nowVarName) < 0 || varType[varName.indexOf(nowVarName)] != "N" || isNaN(Number(newCode.split(" ")[2]))) {
-                        alert("Error : line" + (i + 1) + ", Add명령어는 존재하는 변수 이름과 더할 값을 차례로 나타내야 합니다.")
+                        alert("Error : line" + (i + 1) + ", Add명령어는 존재하는 숫자 변수 이름과 더할 값을 차례로 나타내야 합니다.")
                         return;
                     } else {
                         varValue[varName.indexOf(nowVarName)] = Number(varValue[varName.indexOf(nowVarName)]) + Number(newCode.split(" ")[2]);
+                    }
+                } else if (newCode.indexOf("Mul ") == 0) {
+                    var nowVarName = newCode.split(" ")[1];
+                    if (varName.indexOf(nowVarName) < 0 || varType[varName.indexOf(nowVarName)] != "N" || isNaN(Number(newCode.split(" ")[2]))) {
+                        alert("Error : line" + (i + 1) + ", Mul명령어는 존재하는 숫자 변수 이름과 더할 값을 차례로 나타내야 합니다.")
+                        return;
+                    } else {
+                        varValue[varName.indexOf(nowVarName)] = Number(varValue[varName.indexOf(nowVarName)]) * Number(newCode.split(" ")[2]);
+                    }
+                } else if (newCode.indexOf("If ") == 0) {
+                    if (newCode.indexOf("Do") == 5) {
+                        if (Number(newCode[3]) == 1) {
+                            var lineIndex = Number(newCode.split(" ")[3]);
+                            if (isNaN(lineIndex) || lineIndex % 1 != 0 || lineIndex < 1) {
+                                alert("Error : line" + (i + 1) + ", Do명령어 뒤에는 정수만 들어올 수 있습니다.");
+                                return;
+                            } else {
+                                i = lineIndex - 2;
+                            }
+                        } else if (isNaN(Number(newCode[3]))) {
+                            alert("Error : line" + (i + 1) + ", 0 혹은 1의 숫자형 혹은 Bool형의 값만 대입할 수 있습니다.");
+                            return;
+                        }
                     }
                 }
             }
