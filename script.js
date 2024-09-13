@@ -76,6 +76,22 @@ function CodeToResult(codeArray) {
                         varValue.push(newVarValue);
                         varType.push("S")
                     }
+                } else if (newCode.indexOf("Go ") == 0) {
+                    var lineIndex = Number(newCode.slice(3));
+                    if (isNaN(lineIndex) || lineIndex % 1 != 0 || lineIndex < 1) {
+                        alert("Error : line" + (i + 1) + ", Go명령어 뒤에는 정수만 들어올 수 있습니다.");
+                        return;
+                    } else {
+                        i = lineIndex - 2;
+                    }
+                } else if (newCode.indexOf("Add ") == 0) {
+                    var nowVarName = newCode.split(" ")[1];
+                    if (varName.indexOf(nowVarName) < 0 || varType[varName.indexOf(nowVarName)] != "N" || isNaN(Number(newCode.split(" ")[2]))) {
+                        alert("Error : line" + (i + 1) + ", Add명령어는 존재하는 변수 이름과 더할 값을 차례로 나타내야 합니다.")
+                        return;
+                    } else {
+                        varValue[varName.indexOf(nowVarName)] = Number(varValue[varName.indexOf(nowVarName)]) + Number(newCode.split(" ")[2]);
+                    }
                 }
             }
         }
