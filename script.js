@@ -6,6 +6,10 @@ allCode = [];
 varName = [];
 varValue = [];
 varType = [];
+funcName = [];
+funcStartLine = [];
+funcLastLine = [];
+var lastCodeLine = 0;
 
 returnBtn.addEventListener('click', () => {
     var allText = document.getElementById('Area').value;
@@ -17,6 +21,10 @@ function ReadCode(codeText) {
     varName = [];
     varValue = [];
     varType = [];
+    funcName = [];
+    funcStartLine = [];
+    funcLastLine = [];
+    lastCodeLine = 0;
     CodeToResult(allCode);
 }
 
@@ -119,8 +127,8 @@ function CodeToResult(codeArray) {
                         varValue[varName.indexOf(nowVarName)] = Number(varValue[varName.indexOf(nowVarName)]) * Number(newCode.split(" ")[2]);
                     }
                 } else if (newCode.indexOf("If ") == 0) {
-                    if (newCode.indexOf("Do") == 5) {
-                        if (Number(newCode[3]) == 1) {
+                    if (newCode.split(" ")[2] == "Do") {
+                        if (Number(newCode.split(" ")[1]) == 1) {
                             var lineIndex = Number(newCode.split(" ")[3]);
                             if (isNaN(lineIndex) || lineIndex % 1 != 0 || lineIndex < 1) {
                                 alert("Error : line" + (i + 1) + ", Do명령어 뒤에는 정수만 들어올 수 있습니다.");
@@ -128,10 +136,29 @@ function CodeToResult(codeArray) {
                             } else {
                                 i = lineIndex - 2;
                             }
-                        } else if (isNaN(Number(newCode[3]))) {
+                        } else if (isNaN(Number(newCode.split(" ")[1])) || Number(newCode.split(" ")[1]) != 0) {
                             alert("Error : line" + (i + 1) + ", 0 혹은 1의 숫자형 혹은 Bool형의 값만 대입할 수 있습니다.");
                             return;
                         }
+                    }
+                } else if (newCode.indexOf("F ") == 0 && newCode.indexOf("->") >= 0) {
+                    var nowFuncName = newCode.slice(2, newCode.indexOf("->"));
+                    if (codeArray.indexOf("<-" + nowFuncName) < 0) {
+                        alert("Error: line" + (i + 1) + ", 함수 선언 시 닫는 코드가 필요합니다.");
+                        return;
+                    }
+                    funcName.push(nowFuncName);
+                    funcStartLine.push(i);
+                    funcLastLine.push(codeArray.indexOf("<-" + nowFuncName) + 1);
+                    i = codeArray.indexOf("<-" + nowFuncName);
+                } else if (newCode.indexOf("DoF ") == 0) {
+                    var nowFuncName = newCode.split(" ")[1];
+                    var funcNum = funcName.indexOf(nowFuncName);
+                    lastCodeLine = i;
+                    i = funcStartLine[funcNum];
+                } else if (newCode.indexOf("<-") == 0) {
+                    if (funcName.indexOf(newCode.slice(2)) >= 0) {
+                        i = lastCodeLine;
                     }
                 }
             }
