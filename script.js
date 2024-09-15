@@ -160,6 +160,34 @@ function CodeToResult(codeArray) {
                     if (funcName.indexOf(newCode.slice(2)) >= 0) {
                         i = lastCodeLine;
                     }
+                } else if (newCode.indexOf("Bigger ") == 0) {
+                    if (newCode.split(" ")[3] != "Than") {
+                        alert("Error: line" + (i + 1) + ", Bigger 명령어는 Than 키워드가 필요합니다.");
+                        return;
+                    }
+                    if (varName.indexOf(newCode.split(" ")[1]) < 0 || isNaN(newCode.split(" ")[2]) || isNaN(newCode.split(" ")[4])) {
+                        alert("Error: line" + (i + 1) + ", Bigger 명령어는 Bool 형 변수 1개와 2개의 Number 형 숫자여야 합니다.");
+                        return;
+                    }
+                    if (varType[varName.indexOf(newCode.split(" ")[1])] != "B") {
+                        alert("Error: line" + (i + 1) + ", Bigger 명령어의 첫 변수는 Bool 형이어야 합니다.");
+                        return;
+                    }
+                    if (Number(newCode.split(" ")[2]) > Number(newCode.split(" ")[4])) {
+                        varValue[varName.indexOf(newCode.split(" ")[1])] = 1;
+                    } else {
+                        varValue[varName.indexOf(newCode.split(" ")[1])] = 0;
+                    }
+                } else if (newCode.indexOf("Not ") == 0) {
+                    if (varName.indexOf(newCode.split(" ")[1]) < 0 || varType[varName.indexOf(newCode.split(" ")[1])] != "B") {
+                        alert("Error: line" + (i + 1) + ", Not 명령어는 Bool 형의 변수 1개가 필요합니다.");
+                        return;
+                    }
+                    if (varValue[varName.indexOf(newCode.split(" ")[1])] == 0) {
+                        varValue[varName.indexOf(newCode.split(" ")[1])] = 1;
+                    } else {
+                        varValue[varName.indexOf(newCode.split(" ")[1])] = 0;
+                    }
                 }
             }
         }
